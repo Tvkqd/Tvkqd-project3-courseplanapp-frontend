@@ -10,6 +10,6 @@ module.exports = {
     host: "localhost",
     port: "8080"
   },
-  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/project2/2022/t1/',
+  publicPath: process.env.NODE_ENV === 'development' ? '/' : '/project3/2022/t1/',
   transpileDependencies: ['vuetify'],
 };
