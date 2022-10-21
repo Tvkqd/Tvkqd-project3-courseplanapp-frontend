@@ -17,10 +17,11 @@
         />
         </a>
         <v-toolbar-items>
-          <v-btn to="/" text color="red darken-4">Course</v-btn>
+          <v-btn to="/" text color="red darken-4">Calendar</v-btn>
+          <!--<v-btn to="/" text color="red darken-4">Course</v-btn>-->
           <!--<v-btn to="/about" text color="red darken-4">About</v-btn>
           <v-btn to="/hello" text color="red darken-4">Hello</v-btn>-->
-          <v-btn to="/add" text color="red darken-4">Add</v-btn>
+          <!--<v-btn to="/add" text color="red darken-4">Add</v-btn>-->
           <!--<v-btn to="/delete" text color="red darken-4">Delete</v-btn>
           <v-btn to="/update" text color="red darken-4">Update</v-btn>-->
         </v-toolbar-items>
