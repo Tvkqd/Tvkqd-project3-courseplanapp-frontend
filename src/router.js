@@ -30,6 +30,32 @@ export default new Router({
       path: "/delete",
       name: "delete",
       component: () => import("./components/UpdateCourse")
-    }
+    },
+    {
+      path: "/custom",
+      name: "custom",
+      component: () => import("./views/CustomEventList")
+    },
+    {
+      path: "/event/:id", //need to store in url. currently can't reload page manually.
+      props: true,
+      name: "event-view",
+      component: () => import("./views/Event-View")
+    },
+    {
+      path: "/add-event",
+      name: "add-event",
+      component: () => import("./components/AddCustomEvent")
+    },
+    {
+      path: "/office-hours",
+      name: "office-hours",
+      component: () => import("./views/OfficeHours")
+    },
+    {
+      path: "/add-office-hours",
+      name: "add-office-hours",
+      component: () => import("./views/OfficeHours")
+    },
   ]
 });

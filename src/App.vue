@@ -23,6 +23,10 @@
           <v-btn to="/add" text color="red darken-4">Add</v-btn>
           <!--<v-btn to="/delete" text color="red darken-4">Delete</v-btn>
           <v-btn to="/update" text color="red darken-4">Update</v-btn>-->
+          <v-btn to="/custom" text color="red darken-4">Custom Event</v-btn>
+          <v-btn to="/add-event" text color="red darken-4">Add Event</v-btn>
+          <v-btn to="/office-hours" text color="red darken-4">office</v-btn>
+          <v-btn to="/add-office-hours" text color="red darken-4">add office</v-btn>
         </v-toolbar-items>
       </div>
     </v-app-bar>
