@@ -3,22 +3,19 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="setToday">
+            Today
+          </v-btn>
+          <v-btn fab text small color="grey darken-2" @click="prev">
+            <v-icon small> mdi-chevron-left </v-icon>
+          </v-btn>
+          <v-btn fab text small color="grey darken-2" @click="next">
+            <v-icon small> mdi-chevron-right </v-icon>
+          </v-btn>
           <v-toolbar-title v-if="$refs.calendar">
             {{ $refs.calendar.title }}
           </v-toolbar-title>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
-            Programs
-          </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
-            Rooms
-          </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
-            Faculty
-          </v-btn>
           <v-spacer></v-spacer>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="exportAsFile">
-            Export
-          </v-btn>
           <v-menu bottom right>
             <template v-slot:activator="{ on, attrs }">
               <v-btn outlined color="grey darken-2" v-bind="attrs" v-on="on">
@@ -50,10 +47,7 @@
           color="primary"
           :events="events"
           :event-color="getEventColor"
-          type="week"
-          :first-interval="8"
-          :interval-minutes="60"
-          :interval-count="8"
+          :type="type"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -95,22 +89,16 @@
 </template>
 
 <script>
-import CourseDataService from "../services/CourseDataService";
 export default {
   data: () => ({
-    depts: [],
-    filter_dept: "",
-    courses: [],
-    title: "",
-    headers: [
-      //add course stuff
-      { text: "Department", align: "start", sortable: false, value: "dept" },
-      { text: "Course Number", value: "course_number", sortable: true },
-      { text: "Name", value: "name", sortable: false },
-      { text: "Description", value: "description", sortable: false },
-      { text: "Actions", value: "actions", sortable: false },
-    ],
     focus: "",
+    type: "month",
+    typeToLabel: {
+      month: "Month",
+      week: "Week",
+      day: "Day",
+      "4day": "4 Days",
+    },
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -135,7 +123,6 @@ export default {
       "Party",
     ],
   }),
-
   mounted() {
     this.$refs.calendar.checkChange();
   },
@@ -155,23 +142,6 @@ export default {
     },
     next() {
       this.$refs.calendar.next();
-    },
-    pickSort() {
-      // eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-      this.focus = "";
-    },
-    exportAsFile() {
-      
-    },
-    filterCourse() {
-      CourseDataService.findDept(this.filter_dept)
-        .then((response) => {
-          this.courses = response.data.map(this.getDisplayCourse);
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
     },
     showEvent({ nativeEvent, event }) {
       const open = () => {

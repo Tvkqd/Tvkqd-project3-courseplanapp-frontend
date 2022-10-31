@@ -31,6 +31,30 @@ export default new Router({
       path: "/delete",
       name: "delete",
       component: () => import("./components/UpdateCourse")
-    }
+    },
+    {
+      path: "/office-hours",
+      name: "OfficeHours",
+      //component: () => import("./views/List-View")
+      component: () => import("./views/OfficeHours")
+    },
+    {
+      path: "/admin",
+      name: "Admin",
+      //component: () => import("./views/List-View")
+      component: () => import("./views/Admin-CourseCatalog")
+    },
+    {
+      path: "/auth",
+      name: "Auth",
+      //component: () => import("./views/List-View")
+      component: () => import("./views/Auth-Landing")
+    },
+    {
+      path: "/conflicts",
+      name: "Conflicts",
+      //component: () => import("./views/List-View")
+      component: () => import("./views/Chair-ViewConflicts")
+    },
   ]
 });
