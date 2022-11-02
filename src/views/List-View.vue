@@ -55,10 +55,11 @@ import Multiselect from 'vue-multiselect';
 import CourseDataService from "../services/CourseDataService";
 export default {
   name: "courses-list",
-  data() {
+  data: function(){
     return {
       depts : [],
       filter_dept: '',
+      course_name: '',
       courses: [],
       title: "",
       headers: [
