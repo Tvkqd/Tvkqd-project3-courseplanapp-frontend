@@ -5,9 +5,9 @@ export default new Router({
   mode: "history",
   routes: [
     {
-      path: "/",
-      name: "list-view",
-      component: () => import("./views/List-View")
+      // path: "/",
+      // name: "list-view",
+      // component: () => import("./views/List-View")
     },
     {
       path: "/course/:id", //need to store in url. currently can't reload page manually.
