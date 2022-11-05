@@ -56,6 +56,7 @@ export default {
   name: "courses-list",
   data() {
     return {
+      name: '',
       depts : [],
       filter_dept: '',
       courses: [],

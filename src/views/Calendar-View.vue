@@ -3,19 +3,20 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
-          </v-toolbar-title>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
+          
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickPrograms">
             Programs
           </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickRooms">
             Rooms
           </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickFaculty">
             Faculty
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="viewConflicts">
+            Conflicts
+          </v-btn>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="exportAsFile">
             Export
           </v-btn>
@@ -26,20 +27,6 @@
                 <v-icon right> mdi-menu-down </v-icon>
               </v-btn>
             </template>
-            <v-list>
-              <v-list-item @click="type = 'day'">
-                <v-list-item-title>Day</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'week'">
-                <v-list-item-title>Week</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = 'month'">
-                <v-list-item-title>Month</v-list-item-title>
-              </v-list-item>
-              <v-list-item @click="type = '4day'">
-                <v-list-item-title>4 days</v-list-item-title>
-              </v-list-item>
-            </v-list>
           </v-menu>
         </v-toolbar>
       </v-sheet>
@@ -53,7 +40,7 @@
           type="week"
           :first-interval="8"
           :interval-minutes="60"
-          :interval-count="8"
+          :interval-count="15"
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -68,7 +55,8 @@
           <v-card color="grey lighten-4" min-width="350px" flat>
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
+                <!-- ====================================================================================================================================== -->
+                <v-icon small class="mr-2" @click="editCourse(item.id)">mdi-pencil</v-icon> 
               </v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               <v-spacer></v-spacer>
@@ -156,12 +144,23 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    pickSort() {
-      // eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
-      this.focus = "";
+    pickPrograms() {
+      // show everything that takes place in this program ==================================================================================================
+
+    },
+    pickRooms() {
+      // show everything that takes place in this room
+
+    },
+    pickFaculty() {
+      // show everything that this faculty member does
+
+    },
+    viewConflicts(){
+      this.$router.push({ name: "Conflicts" });
     },
     exportAsFile() {
-      
+
     },
     filterCourse() {
       CourseDataService.findDept(this.filter_dept)

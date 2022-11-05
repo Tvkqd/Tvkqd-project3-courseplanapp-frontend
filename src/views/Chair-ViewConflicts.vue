@@ -3,9 +3,7 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          <v-toolbar-title v-if="$refs.calendar">
-            {{ $refs.calendar.title }}
-          </v-toolbar-title>
+
           <v-btn outlined class="mr-4" color="grey darken-2" @click="pickSort">
             Programs
           </v-btn>
@@ -16,6 +14,9 @@
             Faculty
           </v-btn>
           <v-spacer></v-spacer>
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="backToCal">
+            Back
+          </v-btn>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="exportAsFile">
             Export
           </v-btn>
@@ -159,6 +160,9 @@ export default {
     pickSort() {
       // eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
       this.focus = "";
+    },
+    backToCal(){
+      this.$router.push({ name: "calendar-view" });
     },
     exportAsFile() {
       

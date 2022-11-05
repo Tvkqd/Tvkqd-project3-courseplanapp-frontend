@@ -35,26 +35,33 @@ export default new Router({
     {
       path: "/office-hours",
       name: "OfficeHours",
-      //component: () => import("./views/List-View")
       component: () => import("./views/OfficeHours")
     },
     {
       path: "/admin",
       name: "Admin",
-      //component: () => import("./views/List-View")
       component: () => import("./views/Admin-CourseCatalog")
+    },
+    {
+      path: "/adminSchedule",
+      name: "Schedule",
+      component: () => import("./views/Admin-Schedule")
     },
     {
       path: "/auth",
       name: "Auth",
-      //component: () => import("./views/List-View")
       component: () => import("./views/Auth-Landing")
     },
     {
       path: "/conflicts",
       name: "Conflicts",
-      //component: () => import("./views/List-View")
       component: () => import("./views/Chair-ViewConflicts")
     },
+    {
+      path: "/rooms",
+      name: "Rooms",
+      component: () => import("./views/RoomsList")
+    },
+    
   ]
 });
