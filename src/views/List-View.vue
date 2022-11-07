@@ -53,13 +53,15 @@
 
 import Multiselect from 'vue-multiselect';
 import CourseDataService from "../services/CourseDataService";
-import  filterSectionsByDept from "../components/DataCombiner.vue"
+import SectionsDataService from "../services/SectionDataService"
 export default {
   name: "courses-list",
   data: function(){
     return {
       depts : [],
       sections: [],
+      filtered_courses: [],
+      filtered_sections: [],
       filter_dept: '',
       course_name: '',
       courses: [],
@@ -96,6 +98,15 @@ export default {
           console.log(e);
         });
     },
+    retrieveSections() {
+      SectionsDataService.getAll()
+      .then((response) => {
+        this.sections = response.data
+      })
+      .catch((e) => {
+        console.log(e)
+      });
+    },
     refreshList() {
       this.retrieveCourses();
     },
@@ -123,7 +134,16 @@ export default {
         });
     },
     filterCourse(){
-     this.sections = filterSectionsByDept(this.filter_dept)
+      this.filtered_courses = this.courses.filter(course => course.dept == this.filter_dept);
+      for(let i =0; i < this.sections.length; i++){
+        for(let j = 0; j < this.filtered_courses.length;j++){
+          if(this.sections[i].courseId == this.filtered_courses[j].id){
+            this.filtered_sections.push(this.sections[i]);
+          }
+        }
+      }
+      console.log(this.filtered_courses);
+      console.log(this.filtered_sections);
     },
     editCourse(id) {
       this.$router.push({ name: "update", params: { id: id } });
@@ -143,12 +163,13 @@ export default {
         course_number: course.course_number,
         dept: course.dept.length > 30 ? course.dept.substr(0, 30) + "..." : course.dept,
         name: course.name.length > 30 ? course.name.substr(0, 30) + "..." : course.name,
-        description: course.description.length > 30 ? course.description.substr(0, 30) + "..." : course.description,
+       // description: course.description.length > 30 ? course.description.substr(0, 30) + "..." : course.description,
       };
     },
   },
   mounted() {
     this.retrieveCourses();
+    this.retrieveSections();
   },
 };
 </script>
