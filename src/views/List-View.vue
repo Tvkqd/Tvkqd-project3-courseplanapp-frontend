@@ -53,11 +53,13 @@
 
 import Multiselect from 'vue-multiselect';
 import CourseDataService from "../services/CourseDataService";
+import  filterSectionsByDept from "../components/DataCombiner.vue"
 export default {
   name: "courses-list",
   data: function(){
     return {
       depts : [],
+      sections: [],
       filter_dept: '',
       course_name: '',
       courses: [],
@@ -121,14 +123,7 @@ export default {
         });
     },
     filterCourse(){
-      CourseDataService.findDept(this.filter_dept)
-      .then((response) => {
-        this.courses = response.data.map(this.getDisplayCourse);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+     this.sections = filterSectionsByDept(this.filter_dept)
     },
     editCourse(id) {
       this.$router.push({ name: "update", params: { id: id } });
