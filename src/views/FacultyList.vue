@@ -99,7 +99,7 @@ export default {
       });
     },
     editFaculty(id) {
-      this.$router.push({ name: "update", params: { id: id } }); // change to update faculty =================================================================================== 
+      this.$router.push({ name: "updateFaculty", params: { id: id } }); 
     },
     deleteFaculty(id) {
       CourseDataService.delete(id)

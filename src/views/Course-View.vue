@@ -62,7 +62,7 @@ export default {
     },
     
     editCourse(id) {
-      this.$router.push({ name: "update", params: { id: id } });
+      this.$router.push({ name: "updateCourse", params: { id: id } });
     },
     deleteCourse(id) {
       CourseDataService.delete(id)

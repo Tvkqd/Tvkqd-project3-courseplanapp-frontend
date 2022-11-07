@@ -11,28 +11,6 @@ export default new Router({
       component: () => import("./views/Calendar-View")
     },
     {
-      path: "/course/:id", //need to store in url. currently can't reload page manually.
-      props: true,
-      name: "course-view",
-      component: () => import("./views/Course-View")
-    },
-    {
-      path: "/add",
-      name: "add",
-      component: () => import("./components/AddCourse")
-    },
-    {
-      path: "/update/:id",
-      props: true,
-      name: "update",
-      component: () => import("./components/UpdateCourse")
-    },
-    {
-      path: "/delete",
-      name: "delete",
-      component: () => import("./components/UpdateCourse")
-    },
-    {
       path: "/office-hours",
       name: "OfficeHours",
       component: () => import("./views/OfficeHours")
@@ -58,9 +36,53 @@ export default new Router({
       component: () => import("./views/Chair-ViewConflicts")
     },
     {
+      path: "/course/:id", //need to store in url. currently can't reload page manually.
+      props: true,
+      name: "course-view",
+      component: () => import("./views/Course-View")
+    },
+    {
+      path: "/addCourse",
+      name: "addCourse",
+      component: () => import("./components/AddCourse")
+    },
+    {
+      path: "/update/:id",
+      props: true,
+      name: "updateCourse",
+      component: () => import("./components/UpdateCourse")
+    },
+    {
+      path: "/deleteCourse",
+      name: "deleteCourse",
+      component: () => import("./components/UpdateCourse")
+    },
+    {
       path: "/rooms",
       name: "Rooms",
       component: () => import("./views/RoomsList")
+    },
+    {
+      path: "/room/:id", 
+      props: true,
+      name: "room-view",
+      component: () => import("./views/Course-View")
+    },
+    {
+      path: "/addCourse",
+      name: "addCourse",
+      component: () => import("./components/AddCourse")
+    },
+    {
+      path: "/update/:id",
+      props: true,
+      name: "updateCourse",
+      component: () => import("./components/UpdateCourse")
+    },
+    {
+      path: "/deleteCourse",
+      name: "deleteCourse",
+      component: () => import("./components/UpdateCourse")
     },
     
   ]

@@ -45,7 +45,7 @@ export default {
       headers: [
         //add room stuff
         
-        { text: "Course Number", value: "number", sortable: true },
+        { text: "Room Number", value: "number", sortable: true },
         { text: "Cap", align: "start", sortable: false, value: "capacity" },
         { text: "Actions", value: "actions", sortable: false },
       ],
@@ -102,7 +102,7 @@ export default {
       });
     },
     editRoom(id) {
-      this.$router.push({ name: "update", params: { id: id } }); // change to update room =================================================================================== 
+      this.$router.push({ name: "updateRoom", params: { id: id } }); 
     },
     deleteRoom(id) {
       CourseDataService.delete(id)
