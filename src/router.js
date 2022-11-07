@@ -47,7 +47,7 @@ export default new Router({
       component: () => import("./components/AddCourse")
     },
     {
-      path: "/update/:id",
+      path: "/updateCourse/:id",
       props: true,
       name: "updateCourse",
       component: () => import("./components/UpdateCourse")
@@ -55,7 +55,7 @@ export default new Router({
     {
       path: "/deleteCourse",
       name: "deleteCourse",
-      component: () => import("./components/UpdateCourse")
+      component: () => import("./components/UpdateCourse") //what????????????????????????????
     },
     {
       path: "/rooms",
@@ -66,24 +66,62 @@ export default new Router({
       path: "/room/:id", 
       props: true,
       name: "room-view",
-      component: () => import("./views/Course-View")
+      component: () => import("./views/Room-View")
     },
     {
-      path: "/addCourse",
-      name: "addCourse",
-      component: () => import("./components/AddCourse")
+      path: "/addRoom",
+      name: "addRoom",
+      component: () => import("./components/AddRoom")
     },
     {
-      path: "/update/:id",
+      path: "/updateRoom/:id",
       props: true,
-      name: "updateCourse",
-      component: () => import("./components/UpdateCourse")
+      name: "updateRoom",
+      component: () => import("./components/UpdateRoom")
     },
     {
-      path: "/deleteCourse",
-      name: "deleteCourse",
-      component: () => import("./components/UpdateCourse")
+      path: "/faculty",
+      name: "Faculty",
+      component: () => import("./views/FacultyList")
     },
-    
+    {
+      path: "/faculty/:id", 
+      props: true,
+      name: "faculty-view",
+      component: () => import("./views/Faculty-View")
+    },
+    {
+      path: "/addFaculty",
+      name: "addFaculty",
+      component: () => import("./components/AddFaculty")
+    },
+    {
+      path: "/updateFaculty/:id",
+      props: true,
+      name: "updateFaculty",
+      component: () => import("./components/UpdateFaculty")
+    },
+    {
+      path: "/users",
+      name: "Users",
+      component: () => import("./views/UserList")
+    },
+    {
+      path: "/user/:id", 
+      props: true,
+      name: "user-view",
+      component: () => import("./views/User-View")
+    },
+    {
+      path: "/addUser",
+      name: "addUser",
+      component: () => import("./components/AddUser")
+    },
+    {
+      path: "/updateUser/:id",
+      props: true,
+      name: "updateUser",
+      component: () => import("./components/UpdateUser")
+    },
   ]
 });
