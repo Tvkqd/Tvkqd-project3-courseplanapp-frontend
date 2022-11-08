@@ -1,6 +1,6 @@
 
 <script>
-  import CourseDataService from "../services/CourseDataService";
+  // import CourseDataService from "../services/CourseDataService";
   export default {
     name: "courses-list",
     data() {
@@ -25,7 +25,11 @@
         users: [],
         filter_dept: '',
         filter_fac_name: '',
-        user: []
+        user: [],
+        magaSections: [],
+        filter_room_name: '',
+        tempCourse: [],
+        tempMageSec: [],
       };
     },
     methods: {
@@ -57,6 +61,59 @@
         this.filter_fac_name = this.faculty.filter(fac => fac.userId == this.user.id).name;
         this.filterSectionsByFacName();
       },
+      filterSectionsByRoomName() {
+        this.filtered_rooms = this.rooms.filter(room => room.name == this.filter_room_name);
+        this.filtered_sectionTimes = this.sectionTimes.filter(sectTimes => sectTimes.roomId == this.filtered_rooms.id);
+        for(let i =0; i < this.sections.length; i++){
+          for(let j = 0; j < this.filtered_sectionTimes.length;j++){
+            if(this.sections[i].id == this.filtered_SectionTimes[j].sectionId){
+              this.filtered_sections.push(this.sections[i]);
+            }
+          }
+        }
+      },
+      startUp(){
+        this.filtered_courses = this.courses;
+        this.filtered_faculty = this.faculty;
+        this.filtered_facultySections = this.facultySections;
+        this.filtered_officeHours = this.officeHours;
+        this.filtered_rooms = this.rooms;
+        this.filtered_seamesters = this.seamesters;
+        this.filtered_sectionTimes = this.sectionTimes;
+        this.filtered_sections = this.sections;
+      },
+      sectionsJoinAll() {
+        for(let i = 0; i < this.filtered_sections.length;i++){
+          for(let a =0;a < this.filtered_courses;a++){
+            if(this.filtered_sections[i].courseId == this.filtered_courses[a].id){
+              this.tempCourse = this.filtered_courses[a];
+              break;
+            }
+          }
+          for(let j =0;j< this.filtered_sectionTimes.length;j++){
+            if(this.filtered_sectionTimes[j].sectionId == this.filtered_sections[i].id){
+              for(let k=0;k < this.filtered_rooms.length;k++){
+                if(this.filtered_sectionTimes[j].roomId == this.filtered_rooms[k].id){
+                  for(let l=0;l< this.filtered_facultySections.length;l++){
+                    if(this.filtered_sections[i].id == this.filtered_facultySections[l].sectionId){
+                      for(let m=0;m< this.filtered_faculty.length;m++){
+                        if(this.filtered_facultySections[l].facultyId == this.faculty[m].id){
+
+                          this.magaSections.push();
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+
+      },
+      
+
+
     //   refreshList() {
     //     this.retrieveCourses();
     //     this.currentCourse = null;
@@ -89,7 +146,7 @@
     //   }
     },
     mounted() {
-      this.retrieveCourses();
+      // this.retrieveCourses();
     }
   };
   </script>
