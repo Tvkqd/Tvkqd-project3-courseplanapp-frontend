@@ -25,8 +25,5 @@ class CourseDataService {
   findDept(dept) {
     return http.get(`course/dept/${dept}`);
   }
-  getRooms() {
-    return http.get("room/");
-  }
 }
 export default new CourseDataService();
