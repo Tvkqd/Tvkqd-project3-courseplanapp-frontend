@@ -29,6 +29,7 @@
         magaSections: [],
         filter_room_name: '',
         tempCourse: [],
+        tempSection: [],
         tempMageSec: [],
       };
     },
@@ -84,22 +85,31 @@
       },
       sectionsJoinAll() {
         for(let i = 0; i < this.filtered_sections.length;i++){
+          this.tempSection = this.filtered_sections[i];
           for(let a =0;a < this.filtered_courses;a++){
-            if(this.filtered_sections[i].courseId == this.filtered_courses[a].id){
+            if(this.tempSection.courseId == this.filtered_courses[a].id){
               this.tempCourse = this.filtered_courses[a];
               break;
             }
           }
           for(let j =0;j< this.filtered_sectionTimes.length;j++){
-            if(this.filtered_sectionTimes[j].sectionId == this.filtered_sections[i].id){
+            if(this.filtered_sectionTimes[j].sectionId == this.tempSection.id){
               for(let k=0;k < this.filtered_rooms.length;k++){
                 if(this.filtered_sectionTimes[j].roomId == this.filtered_rooms[k].id){
                   for(let l=0;l< this.filtered_facultySections.length;l++){
-                    if(this.filtered_sections[i].id == this.filtered_facultySections[l].sectionId){
+                    if(this.tempSection.id == this.filtered_facultySections[l].sectionId){
                       for(let m=0;m< this.filtered_faculty.length;m++){
                         if(this.filtered_facultySections[l].facultyId == this.faculty[m].id){
-
-                          this.magaSections.push();
+                          this.tempMageSec.courseName = this.tempCourse.name;
+                          this.tempMageSec.dept = this.tempCourse.dept;
+                          this.tempMageSec.name = this.tempCourse.name;
+                          this.tempMageSec.sectionNumber = this.tempSection.number;
+                          this.tempMageSec.startTime = this.filtered_sectionTimes[j].startTime;
+                          this.tempMageSec.endTime = this.filtered_sectionTimes[j].endTime;
+                          this.tempMageSec.dayWeek = this.filtered_sectionTimes[j].dayWeek;
+                          this.tempmageSec.roomName = this.filtered_rooms[k]
+                          this.tempMageSec.FacultyName = this.filtered_faculty[m].name;
+                          this.magaSections.push(this.tempMageSec);
                         }
                       }
                     }
@@ -109,7 +119,6 @@
             }
           }
         }
-
       },
       
 
