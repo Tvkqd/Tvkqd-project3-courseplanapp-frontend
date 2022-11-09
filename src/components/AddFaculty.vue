@@ -26,7 +26,7 @@
   </v-card>
   </template>
   <script>
-  import CourseDataService from "../services/CourseDataService";
+  import CourseDataService from "../services/FacultyDataService";
   export default {
     name: "add-faculty",
     data() {

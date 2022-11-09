@@ -32,7 +32,7 @@
 <script>
 
 
-import CourseDataService from "../services/CourseDataService";
+import CourseDataService from "../services/UserDataService";
 export default {
   name: "users-list",
   data() {

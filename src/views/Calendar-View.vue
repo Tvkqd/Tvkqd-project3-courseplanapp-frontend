@@ -3,21 +3,40 @@
     <v-col>
       <v-sheet height="64">
         <v-toolbar flat>
-          
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickPrograms">
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="pickPrograms"
+          >
             Programs
           </v-btn>
           <v-btn outlined class="mr-4" color="grey darken-2" @click="pickRooms">
             Rooms
           </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="pickFaculty">
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="pickFaculty"
+          >
             Faculty
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="viewConflicts">
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="viewConflicts"
+          >
             Conflicts
           </v-btn>
-          <v-btn outlined class="mr-4" color="grey darken-2" @click="exportAsFile">
+          <v-btn
+            outlined
+            class="mr-4"
+            color="grey darken-2"
+            @click="exportAsFile"
+          >
             Export
           </v-btn>
           <v-menu bottom right>
@@ -56,7 +75,9 @@
             <v-toolbar :color="selectedEvent.color" dark>
               <v-btn icon>
                 <!-- ====================================================================================================================================== -->
-                <v-icon small class="mr-2" @click="editCourse(item.id)">mdi-pencil</v-icon> 
+                <v-icon small class="mr-2" @click="editCourse(item.id)"
+                  >mdi-pencil</v-icon
+                >
               </v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               <v-spacer></v-spacer>
@@ -84,11 +105,16 @@
 
 <script>
 import CourseDataService from "../services/CourseDataService";
+import FacultyDataService from "../services/FacultyDataService";
+import FacultySectionDataService from "../services/FacultySectionDataService";
+import RoomDataService from "../services/RoomDataService";
+import SectionDataService from "../services/SectionDataService";
+import SectionTimeDataService from "../services/SectionTimeDataService";
+import SemesterDataService from "../services/SemesterDataService";
+import UserDataService from "../services/UserDataService";
+
 export default {
   data: () => ({
-    depts: [],
-    filter_dept: "",
-    courses: [],
     title: "",
     headers: [
       //add course stuff
@@ -112,20 +138,42 @@ export default {
       "orange",
       "grey darken-1",
     ],
-    names: [
-      "Meeting",
-      "Holiday",
-      "PTO",
-      "Travel",
-      "Event",
-      "Birthday",
-      "Conference",
-      "Party",
-    ],
+    names: [],
+
+    courses: [],
+    filtered_courses: [],
+    sections: [],
+    filtered_sections: [],
+    sectionTimes: [],
+    filtered_sectionTimes: [],
+    rooms: [],
+    filtered_rooms: [],
+    specialList: [],
+    officeHours: [],
+    filtered_officeHours: [],
+    faculty: [],
+    filtered_faculty: [],
+    facultySections: [],
+    filtered_facultySections: [],
+    semesters: [],
+    filtered_semesters: [],
+    users: [],
+    filter_dept: "",
+    filter_fac_name: "",
+    user: [],
+    megaSections: [],
+    filter_room_name: "",
+    tempCourse: [],
+    tempMegaSec: [],
   }),
 
   mounted() {
-    this.$refs.calendar.checkChange();
+      this.retrieveAll();
+      this.startUp();
+      this.sectionsJoinAll();
+      console.log("megasections: ");
+      console.log(this.megaSections);
+      console.log("hi");
   },
   methods: {
     viewDay({ date }) {
@@ -138,40 +186,19 @@ export default {
     setToday() {
       this.focus = "";
     },
-    prev() {
-      this.$refs.calendar.prev();
-    },
-    next() {
-      this.$refs.calendar.next();
-    },
     pickPrograms() {
       // show everything that takes place in this program ==================================================================================================
-
     },
     pickRooms() {
       // show everything that takes place in this room
-
     },
     pickFaculty() {
       // show everything that this faculty member does
-
     },
-    viewConflicts(){
+    viewConflicts() {
       this.$router.push({ name: "Conflicts" });
     },
-    exportAsFile() {
-
-    },
-    filterCourse() {
-      CourseDataService.findDept(this.filter_dept)
-        .then((response) => {
-          this.courses = response.data.map(this.getDisplayCourse);
-          console.log(response.data);
-        })
-        .catch((e) => {
-          console.log(e);
-        });
-    },
+    exportAsFile() {},
     showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;
@@ -190,115 +217,259 @@ export default {
 
       nativeEvent.stopPropagation();
     },
-    updateRange({ start, end }) {
-      const events = [];
-
-      const min = new Date(`${start.date}T00:00:00`);
-      const max = new Date(`${end.date}T23:59:59`);
-      const days = (max.getTime() - min.getTime()) / 86400000;
-      const eventCount = this.rnd(days, days + 20);
-
-      for (let i = 0; i < eventCount; i++) {
-        const allDay = this.rnd(0, 3) === 0;
-        const firstTimestamp = this.rnd(min.getTime(), max.getTime());
-        const first = new Date(firstTimestamp - (firstTimestamp % 900000));
-        const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000;
-        const second = new Date(first.getTime() + secondTimestamp);
-
-        events.push({
-          name: this.names[this.rnd(0, this.names.length - 1)],
-          start: first,
-          end: second,
-          color: this.colors[this.rnd(0, this.colors.length - 1)],
-          timed: !allDay,
-        });
-      }
-
-      this.events = events;
+    getDisplayCourse(course) {
+      return {
+        id: course.id,
+        course_number: course.course_number,
+        dept:
+          course.dept.length > 30
+            ? course.dept.substr(0, 30) + "..."
+            : course.dept,
+        name:
+          course.name.length > 30
+            ? course.name.substr(0, 30) + "..."
+            : course.name,
+        description:
+          course.description.length > 30
+            ? course.description.substr(0, 30) + "..."
+            : course.description,
+      };
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
+    getDisplayFaculty(faculty) {
+      return {
+        id: faculty.id,
+        name: faculty.name,
+      };
+    },
+    getDisplayFacultySections(faculty) {
+      return {
+        id: faculty.id,
+      };
+    },
+    getDisplayRooms(room) {
+      return {
+        id: room.id,
+        number: room.number,
+        capacity: room.capacity,
+      };
+    },
+    getDisplaySections(section) {
+      return {
+        id: section.id,
+        number: section.number,
+        semester_id: section.semesterId,
+      };
+    },
+    getDisplaySectionTime(section) {
+      // =========================================================================================================================
+      return {
+        id: section.id,
+        startTime: section.StartTime,
+        endTime: section.EndTime,
+        dayWeek: section.dayWeek,
+      };
+    },
+    getDisplaySemesters(semester) {
+      return {
+        id: semester.id,
+        code: semester.code,
+        startDate: semester.startDate,
+        endDate: semester.endDate,
+      };
+    },
+    getDisplayUsers(user) {
+      return {
+        id: user.id,
+        email: user.email,
+      };
+    },
+    retrieveAll() {
+      CourseDataService.getAll()
+        .then((response) => {
+          this.courses = response.data.map(this.getDisplayCourse);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      FacultyDataService.getAll()
+        .then((response) => {
+          this.faculty = response.data.map(this.getDisplayFaculty);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      FacultySectionDataService.getAll()
+        .then((response) => {
+          this.facultySections = response.data.map(
+            this.getDisplayFacultySections
+          );
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      RoomDataService.getAll()
+        .then((response) => {
+          this.rooms = response.data.map(this.getDisplayRooms);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      SectionDataService.getAll()
+        .then((response) => {
+          this.sections = response.data.map(this.getDisplaySections);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      SectionTimeDataService.getAll()
+        .then((response) => {
+          this.sectionTime = response.data.map(this.getDisplaySectionTime);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      SemesterDataService.getAll()
+        .then((response) => {
+          this.semesters = response.data.map(this.getDisplaySemesters);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      UserDataService.getAll()
+        .then((response) => {
+          this.users = response.data.map(this.getDisplayUsers);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+    },
+    refreshList() {
+      this.retrieveAll();
+      this.startUp();
+      this.sectionsJoinAll();
+      console.log(this.megaSections);
+    },
+    //================================================================================================================
+    filterSectionsByDept() {
+      this.filtered_courses = this.courses.filter(
+        (course) => course.dept == this.filter_dept
+      );
+      for (let i = 0; i < this.sections.length; i++) {
+        for (let j = 0; j < this.filtered_courses.length; j++) {
+          if (this.sections[i].courseId == this.filtered_courses[j].id) {
+            this.filtered_sections.push(this.sections[i]);
+          }
+        }
+      }
+      console.log(this.filtered_faculty);
+      console.log(this.filtered_facultySections);
+      console.log(this.filtered_sections);
+    },
+    filterSectionsByFacName() {
+      this.filtered_faculty = this.faculty.filter(
+        (faculty) => faculty.name == this.filter_fac_name
+      );
+      this.filtered_facultySections.filter(
+        (facSec) => facSec.facultyId == this.filtered_faculty.id
+      );
+      for (let i = 0; i < this.sections.length; i++) {
+        for (let j = 0; j < this.filtered_facultySections.length; j++) {
+          if (
+            this.sections[i].courseId == this.filtered_facultySections[j].id
+          ) {
+            this.filtered_sections.push(this.sections[i]);
+          }
+        }
+      }
+    },
+    filterSectionsUser() {
+      this.filter_fac_name = this.faculty.filter(
+        (fac) => fac.userId == this.user.id
+      ).name;
+      this.filterSectionsByFacName();
+    },
+    filterSectionsByRoomName() {
+      this.filtered_rooms = this.rooms.filter(
+        (room) => room.name == this.filter_room_name
+      );
+      this.filtered_sectionTimes = this.sectionTimes.filter(
+        (sectTimes) => sectTimes.roomId == this.filtered_rooms.id
+      );
+      for (let i = 0; i < this.sections.length; i++) {
+        for (let j = 0; j < this.filtered_sectionTimes.length; j++) {
+          if (this.sections[i].id == this.filtered_SectionTimes[j].sectionId) {
+            this.filtered_sections.push(this.sections[i]);
+          }
+        }
+      }
+    },
+    startUp() {
+      this.filtered_courses = this.courses;
+      this.filtered_faculty = this.faculty;
+      this.filtered_facultySections = this.facultySections;
+      this.filtered_officeHours = this.officeHours;
+      this.filtered_rooms = this.rooms;
+      this.filtered_semesters = this.semesters;
+      this.filtered_sectionTimes = this.sectionTimes;
+      this.filtered_sections = this.sections;
+    },
+    sectionsJoinAll() {
+      for (let i = 0; i < this.filtered_sections.length; i++) {
+        for (let a = 0; a < this.filtered_courses; a++) {
+          if (
+            this.filtered_sections[i].courseId == this.filtered_courses[a].id
+          ) {
+            this.tempCourse = this.filtered_courses[a];
+            break;
+          }
+        }
+        for (let j = 0; j < this.filtered_sectionTimes.length; j++) {
+          if (
+            this.filtered_sectionTimes[j].sectionId ==
+            this.filtered_sections[i].id
+          ) {
+            for (let k = 0; k < this.filtered_rooms.length; k++) {
+              if (
+                this.filtered_sectionTimes[j].roomId ==
+                this.filtered_rooms[k].id
+              ) {
+                for (let l = 0; l < this.filtered_facultySections.length; l++) {
+                  if (
+                    this.filtered_sections[i].id ==
+                    this.filtered_facultySections[l].sectionId
+                  ) {
+                    for (let m = 0; m < this.filtered_faculty.length; m++) {
+                      if (
+                        this.filtered_facultySections[l].facultyId ==
+                        this.faculty[m].id
+                      ) {
+                        this.megaSections.push(this.tempMegaSec);
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
   },
 };
 </script>
-
-<!-- <template>
-  <v-row>
-    <v-col>
-      <v-sheet height="500">
-        <v-calendar
-          ref="calendar"
-          v-model="value"
-          type="week"
-        >
-          <template v-slot:day-body="{ date, week }">
-            <div
-              class="v-current-time"
-              :class="{ first: date === week[0].date }"
-              :style="{ top: nowY }"
-            ></div>
-          </template>
-        </v-calendar>
-      </v-sheet>
-    </v-col>
-  </v-row>
-</template>
-
-<script>
-  export default {
-    data: () => ({
-      value: '',
-      ready: false,
-    }),
-    computed: {
-      cal () {
-        return this.ready ? this.$refs.calendar : null
-      },
-      nowY () {
-        return this.cal ? this.cal.timeToY(this.cal.times.now) + 'px' : '-10px'
-      },
-    },
-    mounted () {
-      this.ready = true
-      this.scrollToTime()
-      this.updateTime()
-    },
-    methods: {
-      getCurrentTime () {
-        return this.cal ? this.cal.times.now.hour * 60 + this.cal.times.now.minute : 0
-      },
-      scrollToTime () {
-        const time = this.getCurrentTime()
-        const first = Math.max(0, time - (time % 30) - 30)
-
-        this.cal.scrollToTime(first)
-      },
-      updateTime () {
-        setInterval(() => this.cal.updateTimes(), 60 * 1000)
-      },
-    },
-  }
-</script>
-
-<style lang="scss">
-.v-current-time {
-  height: 2px;
-  background-color: #ea4335;
-  position: absolute;
-  left: -1px;
-  right: 0;
-  pointer-events: none;
-
-  &.first::before {
-    content: '';
-    position: absolute;
-    background-color: #ea4335;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-top: -5px;
-    margin-left: -6.5px;
-  }
-}
-</style> -->

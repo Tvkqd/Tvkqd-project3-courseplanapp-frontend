@@ -22,7 +22,7 @@
   </v-row>
 </template>
 <script>
-import CourseDataService from "../services/CourseDataService";
+import RoomDataService from "../services/RoomDataService";
 export default {
   name: "rooms-list",
   props: ["id"],
@@ -41,7 +41,7 @@ export default {
     retrieveRoom() {
       console.log("hello");
       console.log(this.id); //use correct id (params.id)? (this.id)? (id)?
-      CourseDataService.get(this.id)
+      RoomDataService.get(this.id)
         .then((response) => {
           this.room = response.data;
           console.log(response.data);
@@ -59,7 +59,7 @@ export default {
       this.$router.push({ name: "updateRoom", params: { id: id } });
     },
     deleteRoom(id) {
-      CourseDataService.delete(id)
+      RoomDataService.delete(id)
         .then(() => {
           this.$router.back();
         })

@@ -32,7 +32,7 @@
 <script>
 
 
-import CourseDataService from "../services/CourseDataService";
+import RoomDataService from "../services/RoomDataService";
 export default {
   name: "rooms-list",
   data() {
@@ -55,7 +55,7 @@ export default {
   methods: {
 
     retrieveRooms() {
-      CourseDataService.getRooms()
+      RoomDataService.getAll()
         .then((response) => {
           this.rooms = response.data.map(this.getDisplayRoom);
           console.log(response.data);
@@ -72,7 +72,7 @@ export default {
       this.$router.push({ name: "room-view", params: { id: id } });
     },
     removeAllRooms() {
-      CourseDataService.deleteAll()
+      RoomDataService.deleteAll()
         .then((response) => {
           console.log(response.data);
           this.refreshList();
@@ -82,7 +82,7 @@ export default {
         });
     },
     searchRoomName() {
-      CourseDataService.findName(this.name)
+      RoomDataService.findName(this.name)
         .then((response) => {
           this.rooms = response.data.map(this.getDisplayRoom);
           console.log(response.data);
@@ -92,7 +92,7 @@ export default {
         });
     },
     filterRoom(){
-      CourseDataService.findDept(this.filter_dept)
+      RoomDataService.findDept(this.filter_dept)
       .then((response) => {
         this.rooms = response.data.map(this.getDisplayRoom);
         console.log(response.data);
@@ -105,7 +105,7 @@ export default {
       this.$router.push({ name: "updateRoom", params: { id: id } }); 
     },
     deleteRoom(id) {
-      CourseDataService.delete(id)
+      RoomDataService.delete(id)
         .then(() => {
           this.refreshList();
         })

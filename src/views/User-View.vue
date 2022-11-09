@@ -22,7 +22,7 @@
   </v-row>
 </template>
 <script>
-import CourseDataService from "../services/CourseDataService";
+import CourseDataService from "../services/UserDataService";
 export default {
   name: "user-list",
   props: ["id"],

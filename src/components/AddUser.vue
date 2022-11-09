@@ -33,7 +33,7 @@
   </v-card>
   </template>
   <script>
-  import CourseDataService from "../services/CourseDataService";
+  import CourseDataService from "../services/UserDataService";
   export default {
     name: "add-user",
     data() {
