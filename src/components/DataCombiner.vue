@@ -26,7 +26,7 @@
         filter_dept: '',
         filter_fac_name: '',
         user: [],
-        magaSections: [],
+        megaSections: [],
         filter_room_name: '',
         tempCourse: [],
         tempSection: [],
@@ -109,7 +109,7 @@
                           this.tempMageSec.dayWeek = this.filtered_sectionTimes[j].dayWeek;
                           this.tempmageSec.roomName = this.filtered_rooms[k]
                           this.tempMageSec.FacultyName = this.filtered_faculty[m].name;
-                          this.magaSections.push(this.tempMageSec);
+                          this.megaSections.push(this.tempMageSec);
                         }
                       }
                     }

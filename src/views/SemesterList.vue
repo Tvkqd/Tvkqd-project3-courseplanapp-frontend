@@ -56,7 +56,7 @@ export default {
   methods: {
 
     retrieveSemesters() {
-      CourseDataService.getSemesters()
+      CourseDataService.getAll()
         .then((response) => {
           this.semesters = response.data.map(this.getDisplaySemesters);
           console.log(response.data);

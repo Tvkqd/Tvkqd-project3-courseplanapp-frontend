@@ -36,6 +36,11 @@ export default new Router({
       component: () => import("./views/Chair-ViewConflicts")
     },
     {
+      path: "/cruds",
+      name: "CRUDs",
+      component: () => import("./views/CRUDs")
+    },
+    {
       path: "/course/:id", //need to store in url. currently can't reload page manually.
       props: true,
       name: "course-view",
@@ -122,6 +127,11 @@ export default new Router({
       props: true,
       name: "updateUser",
       component: () => import("./components/UpdateUser")
+    },
+    {
+      path: "/semesters",
+      name: "Semesters",
+      component: () => import("./views/SemesterList")
     },
   ]
 });

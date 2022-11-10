@@ -167,13 +167,13 @@ export default {
     tempMegaSec: [],
   }),
 
-  mounted() {
-      this.retrieveAll();
-      this.startUp();
-      this.sectionsJoinAll();
-      console.log("megasections: ");
-      console.log(this.megaSections);
-      console.log("hi");
+  async mounted() {
+    await this.retrieveAll();
+    this.startUp();
+    this.sectionsJoinAll();
+    console.log("megasections: ");
+    console.log(this.megaSections);
+    console.log("hi");
   },
   methods: {
     viewDay({ date }) {
@@ -283,7 +283,7 @@ export default {
         email: user.email,
       };
     },
-    retrieveAll() {
+    async retrieveAll() {
       CourseDataService.getAll()
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
@@ -430,20 +430,19 @@ export default {
       this.filtered_sections = this.sections;
     },
     sectionsJoinAll() {
+      console.log(this.sections);
+      let b = 0;
       for (let i = 0; i < this.filtered_sections.length; i++) {
+
+        this.tempSection = this.filtered_sections[i];
         for (let a = 0; a < this.filtered_courses; a++) {
-          if (
-            this.filtered_sections[i].courseId == this.filtered_courses[a].id
-          ) {
+          if (this.tempSection.courseId == this.filtered_courses[a].id) {
             this.tempCourse = this.filtered_courses[a];
             break;
           }
         }
         for (let j = 0; j < this.filtered_sectionTimes.length; j++) {
-          if (
-            this.filtered_sectionTimes[j].sectionId ==
-            this.filtered_sections[i].id
-          ) {
+          if (this.filtered_sectionTimes[j].sectionId == this.tempSection.id) {
             for (let k = 0; k < this.filtered_rooms.length; k++) {
               if (
                 this.filtered_sectionTimes[j].roomId ==
@@ -451,7 +450,7 @@ export default {
               ) {
                 for (let l = 0; l < this.filtered_facultySections.length; l++) {
                   if (
-                    this.filtered_sections[i].id ==
+                    this.tempSection.id ==
                     this.filtered_facultySections[l].sectionId
                   ) {
                     for (let m = 0; m < this.filtered_faculty.length; m++) {
@@ -459,7 +458,25 @@ export default {
                         this.filtered_facultySections[l].facultyId ==
                         this.faculty[m].id
                       ) {
-                        this.megaSections.push(this.tempMegaSec);
+                        this.tempMegaSec.courseName = this.tempCourse.name;
+                        this.tempMegaSec.dept = this.tempCourse.dept;
+                        this.tempMegaSec.name = this.tempCourse.name;
+                        this.tempMegaSec.sectionNumber =
+                          this.tempSection.number;
+                        this.tempMegaSec.startTime =
+                          this.filtered_sectionTimes[j].startTime;
+                        this.tempMegaSec.endTime =
+                          this.filtered_sectionTimes[j].endTime;
+                        this.tempMegaSec.dayWeek =
+                          this.filtered_sectionTimes[j].dayWeek;
+                        this.tempMegaSec.roomName = this.filtered_rooms[k];
+                        this.tempMegaSec.FacultyName =
+                          this.filtered_faculty[m].name;
+                        b++;
+                        this.megaSections[b] = this.tempMegaSec;
+                        // this.megaSections.push(this.tempMegaSec);
+                        console.log("here");
+                        console.log(this.tempMegaSec);
                       }
                     }
                   }

@@ -10,12 +10,7 @@
           label="Number"
           required
         ></v-text-field>
-        <v-text-field
-          v-model="room.capacity"
-          :rules="[(v) => !!v || 'Capacity is required']"
-          label="Capacity"
-          required
-        ></v-text-field>
+
       </v-form>
     </v-card-text>
 

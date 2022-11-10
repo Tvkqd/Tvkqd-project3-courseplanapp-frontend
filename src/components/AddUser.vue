@@ -10,13 +10,7 @@
                 label="Email" 
                 required
         ></v-text-field>
-        <v-text-field 
-                v-model="user.role"
-                :rules="[(v) => !!v || 'Role is required']"
-                label="Role" 
-                required
 
-        ></v-text-field>
         
     </v-form>
     

@@ -1,40 +1,41 @@
 <template>
   <v-row align="center" class="list px-3 mx-auto">
-    <!--Change to use COURSE SECTIONS instead of COURSES =================================================================================-->
+    <!--Change to use COURSE SECTIONS instead of COURSES ======================================================================================-->
     <v-col cols="12" md="8">
       <v-text-field v-model="name" label="Enter a Course Name"></v-text-field>
     </v-col>
     <v-col cols="12" md="4">
-      <v-btn small @click="searchCourseName">
-        Search
-      </v-btn>
+      <v-btn small @click="searchCourseName"> Search </v-btn>
     </v-col>
     <v-col>
       <div>
         <label class="typo__label">select Department</label>
-        <multiselect v-model="filter_dept" :options="depts" :searchable="true" :close-on-select="true" placeholder="Pick a Department"></multiselect>
+        <multiselect
+          v-model="filter_dept"
+          :options="depts"
+          :searchable="true"
+          :close-on-select="true"
+          placeholder="Pick a Department"
+        ></multiselect>
       </div>
     </v-col>
-      <v-col cols="12" md="4">
-      <v-btn small @click="filterCourse">
-        Filter
-      </v-btn>
-      <v-btn small @click="refreshList">
-        clear
-      </v-btn>
+    <v-col cols="12" md="4">
+      <v-btn small @click="filterCourse"> Filter </v-btn>
+      <v-btn small @click="refreshList"> clear </v-btn>
     </v-col>
 
     <!--Body-->
     <v-col cols="12" sm="12">
       <v-card class="mx-auto" tile>
         <v-card-title>Courses</v-card-title>
-        <v-data-table
-          :headers="headers"
-          :items="courses"
-          :items-per-page="10">
+        <v-data-table :headers="headers" :items="courses" :items-per-page="10">
           <template v-slot:[`item.actions`]="{ item }">
-            <v-icon small class="mr-2" @click="chooseCourse(item.id)">mdi-book</v-icon>
-            <v-icon small class="mr-2" @click="editCourse(item.id)">mdi-pencil</v-icon>
+            <v-icon small class="mr-2" @click="chooseCourse(item.id)"
+              >mdi-book</v-icon
+            >
+            <v-icon small class="mr-2" @click="editCourse(item.id)"
+              >mdi-pencil</v-icon
+            >
             <v-icon small @click="deleteCourse(item.id)">mdi-delete</v-icon>
           </template>
         </v-data-table>
@@ -49,17 +50,22 @@
   </v-row>
 </template>
 <script>
-
-import Multiselect from 'vue-multiselect';
+import Multiselect from "vue-multiselect";
 import CourseDataService from "../services/CourseDataService";
+import SectionDataService from "../services/SectionDataService";
+import SectionTimeDataService from "../services/SectionTimeDataService";
+import RoomDataService from "../services/RoomDataService";
 export default {
-  name: "courses-list",
+  name: "section-list",
   data() {
     return {
-      name: '',
-      depts : [],
-      filter_dept: '',
+      name: "",
+      depts: [],
+      filter_dept: "",
       courses: [],
+      sections: [],
+      sectionTimes: [],
+      displaySections: [],
       title: "",
       headers: [
         //add course stuff
@@ -72,20 +78,47 @@ export default {
     };
   },
   components: {
-    Multiselect
+    Multiselect,
   },
   methods: {
-    getDepts(){
-      for(let i=0;i<this.courses.length;i++){
-        if(!this.depts.find(dept => dept === this.courses[i].dept))
-          this.depts.push(this.courses[i].dept)
+    getDepts() {
+      for (let i = 0; i < this.courses.length; i++) {
+        if (!this.depts.find((dept) => dept === this.courses[i].dept))
+          this.depts.push(this.courses[i].dept);
       }
       console.log(this.depts);
     },
     retrieveCourses() {
-      CourseDataService.getAll() // change to get all course sections ========== also get section times for each ==============================
+      CourseDataService.getAll() 
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      SectionDataService.getAll() 
+        .then((response) => {
+          this.sections = response.data.map(this.getDisplaySection);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+      SectionTimeDataService.getAll() 
+        .then((response) => {
+          this.sectionTimes = response.data.map(this.getDisplaySectionTime);
+          console.log(response.data);
+          this.getDepts();
+        })
+        .catch((e) => {
+          console.log(e);
+        });
+        RoomDataService.getAll() 
+        .then((response) => {
+          this.rooms = response.data.map(this.getDisplayRooms);
           console.log(response.data);
           this.getDepts();
         })
@@ -96,7 +129,7 @@ export default {
     refreshList() {
       this.retrieveCourses();
     },
-    chooseCourse(id){
+    chooseCourse(id) {
       this.$router.push({ name: "course-view", params: { id: id } });
     },
     removeAllCourses() {
@@ -119,15 +152,15 @@ export default {
           console.log(e);
         });
     },
-    filterCourse(){
+    filterCourse() {
       CourseDataService.findDept(this.filter_dept)
-      .then((response) => {
-        this.courses = response.data.map(this.getDisplayCourse);
-        console.log(response.data);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+        .then((response) => {
+          this.courses = response.data.map(this.getDisplayCourse);
+          console.log(response.data);
+        })
+        .catch((e) => {
+          console.log(e);
+        });
     },
     editCourse(id) {
       this.$router.push({ name: "update", params: { id: id } });
@@ -145,9 +178,44 @@ export default {
       return {
         id: course.id,
         course_number: course.course_number,
-        dept: course.dept.length > 30 ? course.dept.substr(0, 30) + "..." : course.dept,
-        name: course.name.length > 30 ? course.name.substr(0, 30) + "..." : course.name,
-        description: course.description.length > 30 ? course.description.substr(0, 30) + "..." : course.description,
+        dept:
+          course.dept.length > 30
+            ? course.dept.substr(0, 30) + "..."
+            : course.dept,
+        name:
+          course.name.length > 30
+            ? course.name.substr(0, 30) + "..."
+            : course.name,
+        description:
+          course.description.length > 30
+            ? course.description.substr(0, 30) + "..."
+            : course.description,
+      };
+    },
+    getDisplayRooms(room) {
+      return {
+        id: room.id,
+        number: room.number,
+        capacity: room.capacity,
+      };
+    },
+    getDisplaySection(section) {
+      return {
+        id: section.id,
+        number: section.number,
+      };
+    },
+    getDisplaySectionTime(sectionTime) {
+      return {
+        id: sectionTime.id,
+        startDate: sectionTime.startDate,
+        endDate: sectionTime.endDate,
+        startTime: sectionTime.startTime,
+        endTime: sectionTime.endTime,
+        dayWeek: sectionTime.dayWeek,
+        section_id: sectionTime.sectionId,
+        room_id: sectionTime.roomNumber
+
       };
     },
   },
