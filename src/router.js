@@ -21,6 +21,11 @@ export default new Router({
       component: () => import("./components/AddCourse")
     },
     {
+      path: "/login",
+      name: "login-page",
+      component: () => import("./views/Login")
+    },
+    {
       path: "/update/:id",
       props: true,
       name: "update",

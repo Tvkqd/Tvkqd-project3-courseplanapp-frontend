@@ -23,6 +23,7 @@
           <v-btn to="/add" text color="red darken-4">Add</v-btn>
           <!--<v-btn to="/delete" text color="red darken-4">Delete</v-btn>
           <v-btn to="/update" text color="red darken-4">Update</v-btn>-->
+          <v-btn to="/login" text color="red darken-4">Login</v-btn>
         </v-toolbar-items>
       </div>
     </v-app-bar>
