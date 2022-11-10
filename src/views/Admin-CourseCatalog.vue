@@ -1,9 +1,8 @@
-
 <template>
   <v-row align="center" class="list px-3 mx-auto">
     <!--Search bar-->
     <v-col cols="12" md="8">
-      <v-text-field v-model="course_name" label="Enter a Course Name"></v-text-field>
+      <v-text-field v-model="name" label="Enter a Course Name"></v-text-field>
     </v-col>
     <v-col cols="12" md="4">
       <v-btn small @click="searchCourseName">
@@ -53,17 +52,13 @@
 
 import Multiselect from 'vue-multiselect';
 import CourseDataService from "../services/CourseDataService";
-import SectionsDataService from "../services/SectionDataService"
 export default {
   name: "courses-list",
-  data: function(){
+  data() {
     return {
+      name: '',
       depts : [],
-      sections: [],
-      filtered_courses: [],
-      filtered_sections: [],
       filter_dept: '',
-      course_name: '',
       courses: [],
       title: "",
       headers: [
@@ -98,15 +93,6 @@ export default {
           console.log(e);
         });
     },
-    retrieveSections() {
-      SectionsDataService.getAll()
-      .then((response) => {
-        this.sections = response.data
-      })
-      .catch((e) => {
-        console.log(e)
-      });
-    },
     refreshList() {
       this.retrieveCourses();
     },
@@ -124,7 +110,7 @@ export default {
         });
     },
     searchCourseName() {
-      CourseDataService.findName(this.course_name)
+      CourseDataService.findName(this.name)
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
           console.log(response.data);
@@ -134,19 +120,17 @@ export default {
         });
     },
     filterCourse(){
-      this.filtered_courses = this.courses.filter(course => course.dept == this.filter_dept);
-      for(let i =0; i < this.sections.length; i++){
-        for(let j = 0; j < this.filtered_courses.length;j++){
-          if(this.sections[i].courseId == this.filtered_courses[j].id){
-            this.filtered_sections.push(this.sections[i]);
-          }
-        }
-      }
-      console.log(this.filtered_courses);
-      console.log(this.filtered_sections);
+      CourseDataService.findDept(this.filter_dept)
+      .then((response) => {
+        this.courses = response.data.map(this.getDisplayCourse);
+        console.log(response.data);
+      })
+      .catch((e) => {
+        console.log(e);
+      });
     },
     editCourse(id) {
-      this.$router.push({ name: "update", params: { id: id } });
+      this.$router.push({ name: "updateCourse", params: { id: id } });
     },
     deleteCourse(id) {
       CourseDataService.delete(id)
@@ -163,13 +147,12 @@ export default {
         course_number: course.course_number,
         dept: course.dept.length > 30 ? course.dept.substr(0, 30) + "..." : course.dept,
         name: course.name.length > 30 ? course.name.substr(0, 30) + "..." : course.name,
-       // description: course.description.length > 30 ? course.description.substr(0, 30) + "..." : course.description,
+        description: course.description.length > 30 ? course.description.substr(0, 30) + "..." : course.description,
       };
     },
   },
   mounted() {
     this.retrieveCourses();
-    this.retrieveSections();
   },
 };
 </script>
