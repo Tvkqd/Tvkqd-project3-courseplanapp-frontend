@@ -1,16 +1,27 @@
 <template>
   <v-card>
-    <v-card-title>Update Faculty</v-card-title>
+    <v-card-title>Update Semester</v-card-title>
 
     <v-card-text>
       <v-form>
         <v-text-field
-          v-model="faculty.name"
-          :rules="[(v) => !!v || 'Name is required']"
-          label="Name"
+          v-model="semester.code"
+          :rules="[(v) => !!v || 'Code is required']"
+          label="Code"
           required
         ></v-text-field>
-
+        <v-text-field
+          v-model="semester.startDate"
+          :rules="[(v) => !!v || 'Start Date is required']"
+          label="Start Date"
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="semester.endDate"
+          :rules="[(v) => !!v || 'End Date is required']"
+          label="End Date"
+          required
+        ></v-text-field>
       </v-form>
     </v-card-text>
 
@@ -24,27 +35,29 @@
   </v-card>
 </template>
 <script>
-import CourseDataService from "../services/FacultyDataService";
+import SemesterDataService from "../services/SemesterDataService";
 export default {
-  name: "updateFaculty",
+  name: "updateSemester",
   props: ["id"],
   data() {
     return {
-      faculty: {
-        name: "",
+      semester: {
+        code: "",
+        startDate: "",
+        endDate: "",
       },
       submitted: false,
     };
   },
   methods: {
-    retrieveFaculty() {
+    retrieveSemester() {
       console.log("hi");
       console.log(this.id);
-      CourseDataService.get(this.id)
+      SemesterDataService.get(this.id)
         .then((response) => {
           console.log(response.data);
-          this.faculty = response.data;
-          this.holdFaculty = response.data;
+          this.semester = response.data;
+          this.holdSemester = response.data;
           console.log(response.data);
         })
         .catch((e) => {
@@ -52,14 +65,16 @@ export default {
         });
     },
     refreshList() {
-      this.retrievefaculty();
+      this.retrieveSemester();
     },
     save() {
       var data = {
-        number: this.faculty.name,
+        code: this.semester.code,
+        startDate: this.semester.startDate,
+        endDate: this.semester.endDate,
       };
       console.log(this.id);
-      CourseDataService.update(this.id, data)
+      SemesterDataService.update(this.id, data)
         .then((response) => {
           console.log(response.data);
           this.submitted = true;
@@ -71,17 +86,18 @@ export default {
     },
 
     clear() {
-      this.faculty.name = "";
-
+      this.semester.code = "";
+      this.semester.startDate = "";
+      this.semester.endDate = "";
     },
 
-    newFaculty() {
+    newSemester() {
       this.submitted = false;
-      this.faculty = {};
+      this.semester = {};
     },
   },
   mounted() {
-    this.retrieveFaculty();
+    this.retrieveSemester();
   },
 };
 </script>

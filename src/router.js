@@ -133,5 +133,22 @@ export default new Router({
       name: "Semesters",
       component: () => import("./views/SemesterList")
     },
+    {
+      path: "/semester/:id", 
+      props: true,
+      name: "semester-view",
+      component: () => import("./views/Semester-View")
+    },
+    {
+      path: "/addSemester",
+      name: "addSemester",
+      component: () => import("./components/AddSemester")
+    },
+    {
+      path: "/updateSemester/:id",
+      props: true,
+      name: "updateSemester",
+      component: () => import("./components/UpdateSemester")
+    },
   ]
 });
