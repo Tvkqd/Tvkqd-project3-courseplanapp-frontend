@@ -1,12 +1,12 @@
 <template>
   <v-row align="center" class="list px-3 mx-auto">
     <!--Change to use COURSE SECTIONS instead of COURSES ======================================================================================-->
-    <v-col cols="12" md="8">
+    <!-- <v-col cols="12" md="8">
       <v-text-field v-model="name" label="Enter a Course Name"></v-text-field>
     </v-col>
     <v-col cols="12" md="4">
       <v-btn small @click="searchCourseName"> Search </v-btn>
-    </v-col>
+    </v-col> -->
     <!-- <v-col>
       <div>
         <label class="typo__label">select Department</label>

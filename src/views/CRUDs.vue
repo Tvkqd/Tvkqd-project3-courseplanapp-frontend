@@ -9,9 +9,10 @@
     </v-col>
     <v-col align="center" cols="12" md="12">
       <v-btn to="/addCourse" text color="red darken-4">Add Course</v-btn>
-      <v-btn to="/addCourse" text color="red darken-4">Add =======</v-btn>
+      <!-- <v-btn to="/addCourse" text color="red darken-4">Add =======</v-btn> -->
       <v-btn to="/addRoom" text color="red darken-4">Add Room</v-btn>
       <v-btn to="/addFaculty" text color="red darken-4">Add Faculty</v-btn>
+      <v-btn to="/addSemester" text color="red darken-4">Add Semester</v-btn>
     </v-col>
   </v-row>
 </template>
