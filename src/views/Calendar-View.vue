@@ -23,13 +23,8 @@
             Faculty
           </v-btn>
           <v-spacer></v-spacer>
-          <v-btn
-            outlined
-            class="mr-4"
-            color="grey darken-2"
-            @click="viewConflicts"
-          >
-            Conflicts
+          <v-btn outlined class="mr-4" color="grey darken-2" @click="startUp">
+            Load
           </v-btn>
           <v-btn
             outlined
@@ -61,11 +56,10 @@
           :first-interval="8"
           :interval-minutes="60"
           :interval-count="15"
-
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
-          @change="updateRange"
+          @change="startUp"
         ></v-calendar>
         <v-menu
           v-model="selectedOpen"
@@ -91,17 +85,16 @@
               </v-btn>
             </v-toolbar>
             <v-card-text>
-
               number:
-              <span v-html="selectedEvent.number"></span><br>
-              dept: 
-              <span v-html="selectedEvent.dept"></span> <br>
-              room: 
-              <span v-html="selectedEvent.room"></span> <br>
-              faculty: 
-              <span v-html="selectedEvent.faculty"></span><br>
-              days: 
-              <span v-html="selectedEvent.dayWeek"></span>
+              <span v-html="selectedEvent.number"></span><br />
+              dept:
+              <span v-html="selectedEvent.dept"></span> <br />
+              room:
+              <span v-html="selectedEvent.room"></span> <br />
+              faculty:
+              <span v-html="selectedEvent.faculty"></span><br />
+              days:
+              <span v-html="selectedEvent.dayWeek"></span><br />
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
@@ -137,7 +130,7 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
     today: "2022-11-06",
-    focus: "",
+    focus: "2022-11-06",
     createEvent: null,
     selectedEvent: {},
     selectedElement: null,
@@ -181,7 +174,8 @@ export default {
     tempMegaSec: [],
   }),
 
-  async mounted() {
+  mounted() {
+    this.$refs.calendar.scrollToTime('08:00')
     this.retrieveAll();
   },
   methods: {
@@ -193,7 +187,7 @@ export default {
       return event.color;
     },
     setToday() {
-      this.focus = "";
+      this.focus = "2022-11-06";
     },
     pickPrograms() {
       // show everything that takes place in this program ==================================================================================================
@@ -302,12 +296,6 @@ export default {
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
           console.log(response.data);
-          this.startUp();
-          this.sectionsJoinAll();
-          console.log("megasections: ");
-          console.log(this.megasections);
-          console.log(this.events);
-          console.log("hi");
         })
         .catch((e) => {
           console.log(e);
@@ -372,6 +360,13 @@ export default {
         .then((response) => {
           this.users = response.data.map(this.getDisplayUsers);
           console.log(response.data);
+
+          // this.startUp();
+          // this.sectionsJoinAll();
+          // console.log("megasections: ");
+          // console.log(this.megasections);
+          // console.log(this.events);
+          // console.log("hi");
         })
         .catch((e) => {
           console.log(e);
@@ -379,6 +374,7 @@ export default {
     },
     refreshList() {
       this.retrieveAll();
+      console.log("AAA");
       console.log(this.megaSections);
     },
     //================================================================================================================
@@ -445,11 +441,19 @@ export default {
       this.filtered_semesters = this.semesters;
       this.filtered_sectionTimes = this.sectionTimes;
       this.filtered_sections = this.sections;
+      console.log("well");
+      this.sectionsJoinAll();
+      console.log("megasections: ");
+      console.log(this.megasections);
+      console.log(this.events);
+      console.log("hi");
     },
     rnd(a, b) {
       return Math.floor((b - a + 1) * Math.random()) + a;
     },
     sectionsJoinAll() {
+      this.events = [];
+      this.megasections = [];
       console.log("hello");
 
       for (let i = 0; i < this.filtered_sections.length; i++) {
@@ -511,7 +515,9 @@ export default {
                           this.events.push(this.createEvent);
                         }
                         if (
-                          this.tempMegaSec.dayWeek.toString().includes("S", 0) &&
+                          this.tempMegaSec.dayWeek
+                            .toString()
+                            .includes("S", 0) &&
                           !this.tempMegaSec.dayWeek.toString().includes("SU", 0)
                         ) {
                           // console.log("eeeeeeeeeeeeeeeeeeeeee");
@@ -592,7 +598,7 @@ export default {
                           this.events.push(this.createEvent);
                         }
                         if (
-                          this.tempMegaSec.dayWeek.toString().includes("T", 0) 
+                          this.tempMegaSec.dayWeek.toString().includes("T", 0)
                           // &&
                           // !this.tempMegaSec.dayWeek.toString().includes("H", 0)
                         ) {

@@ -7,7 +7,7 @@
     <v-col cols="12" md="4">
       <v-btn small @click="searchCourseName"> Search </v-btn>
     </v-col>
-    <v-col>
+    <!-- <v-col>
       <div>
         <label class="typo__label">select Department</label>
         <multiselect
@@ -18,11 +18,11 @@
           placeholder="Pick a Department"
         ></multiselect>
       </div>
-    </v-col>
-    <v-col cols="12" md="4">
+    </v-col> -->
+    <!-- <v-col cols="12" md="4">
       <v-btn small @click="filterCourse"> Filter </v-btn>
       <v-btn small @click="refreshList"> clear </v-btn>
-    </v-col>
+    </v-col> -->
 
     <!--Body-->
     <v-col cols="12" sm="12">
@@ -73,6 +73,7 @@ export default {
       { text: "Department", align: "start", sortable: false, value: "dept" },
       { text: "Section Number", value: "sectionNumber", sortable: false },
       { text: "Name", value: "courseName", sortable: false },
+      { text: "Faculty", value: "FacultyName", sortable: false },
       { text: "Actions", value: "actions", sortable: false },
     ],
     focus: "",
@@ -239,11 +240,6 @@ export default {
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
           console.log(response.data);
-          this.startUp();
-          this.sectionsJoinAll();
-          console.log("megasections: ");
-          console.log(this.megasections);
-          console.log("hi");
         })
         .catch((e) => {
           console.log(e);
@@ -302,6 +298,7 @@ export default {
         .then((response) => {
           this.users = response.data.map(this.getDisplayUsers);
           console.log(response.data);
+          this.startUp();
         })
         .catch((e) => {
           console.log(e);
@@ -383,8 +380,13 @@ export default {
       this.filtered_semesters = this.semesters;
       this.filtered_sectionTimes = this.sectionTimes;
       this.filtered_sections = this.sections;
+      this.sectionsJoinAll();
+      console.log("megasections: ");
+      console.log(this.megasections);
+      console.log("hi");
     },
     sectionsJoinAll() {
+      this.megasections = [];
       console.log("hello");
       // let b = 0;
       for (let i = 0; i < this.filtered_sections.length; i++) {
