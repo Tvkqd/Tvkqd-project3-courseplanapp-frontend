@@ -54,12 +54,14 @@
           ref="calendar"
           v-model="focus"
           color="primary"
+          :now="today"
           :events="events"
           :event-color="getEventColor"
           type="week"
           :first-interval="8"
           :interval-minutes="60"
           :interval-count="15"
+
           @click:event="showEvent"
           @click:more="viewDay"
           @click:date="viewDay"
@@ -89,7 +91,17 @@
               </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span v-html="selectedEvent.details"></span>
+
+              number:
+              <span v-html="selectedEvent.number"></span><br>
+              dept: 
+              <span v-html="selectedEvent.dept"></span> <br>
+              room: 
+              <span v-html="selectedEvent.room"></span> <br>
+              faculty: 
+              <span v-html="selectedEvent.faculty"></span><br>
+              days: 
+              <span v-html="selectedEvent.dayWeek"></span>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">
@@ -124,7 +136,9 @@ export default {
       { text: "Description", value: "description", sortable: false },
       { text: "Actions", value: "actions", sortable: false },
     ],
+    today: "2022-11-06",
     focus: "",
+    createEvent: null,
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
@@ -161,19 +175,14 @@ export default {
     filter_dept: "",
     filter_fac_name: "",
     user: [],
-    megaSections: [],
+    megasections: [],
     filter_room_name: "",
     tempCourse: [],
     tempMegaSec: [],
   }),
 
   async mounted() {
-    await this.retrieveAll();
-    this.startUp();
-    this.sectionsJoinAll();
-    console.log("megasections: ");
-    console.log(this.megaSections);
-    console.log("hi");
+    this.retrieveAll();
   },
   methods: {
     viewDay({ date }) {
@@ -241,9 +250,11 @@ export default {
         name: faculty.name,
       };
     },
-    getDisplayFacultySections(faculty) {
+    getDisplayFacultySections(facultySection) {
       return {
-        id: faculty.id,
+        id: facultySection.id,
+        facultyId: facultySection.facultyId,
+        sectionId: facultySection.sectionId,
       };
     },
     getDisplayRooms(room) {
@@ -257,16 +268,19 @@ export default {
       return {
         id: section.id,
         number: section.number,
-        semester_id: section.semesterId,
+        courseId: section.courseId,
+        semesterId: section.semesterId,
       };
     },
-    getDisplaySectionTime(section) {
+    getDisplaySectionTime(sectionTime) {
       // =========================================================================================================================
       return {
-        id: section.id,
-        startTime: section.StartTime,
-        endTime: section.EndTime,
-        dayWeek: section.dayWeek,
+        id: sectionTime.id,
+        startTime: sectionTime.startTime,
+        endTime: sectionTime.endTime,
+        dayWeek: sectionTime.dayWeek,
+        sectionId: sectionTime.sectionId,
+        roomId: sectionTime.roomId,
       };
     },
     getDisplaySemesters(semester) {
@@ -283,12 +297,17 @@ export default {
         email: user.email,
       };
     },
-    async retrieveAll() {
+    retrieveAll() {
       CourseDataService.getAll()
         .then((response) => {
           this.courses = response.data.map(this.getDisplayCourse);
           console.log(response.data);
-          this.getDepts();
+          this.startUp();
+          this.sectionsJoinAll();
+          console.log("megasections: ");
+          console.log(this.megasections);
+          console.log(this.events);
+          console.log("hi");
         })
         .catch((e) => {
           console.log(e);
@@ -333,7 +352,7 @@ export default {
         });
       SectionTimeDataService.getAll()
         .then((response) => {
-          this.sectionTime = response.data.map(this.getDisplaySectionTime);
+          this.sectionTimes = response.data.map(this.getDisplaySectionTime);
           console.log(response.data);
           this.getDepts();
         })
@@ -353,7 +372,6 @@ export default {
         .then((response) => {
           this.users = response.data.map(this.getDisplayUsers);
           console.log(response.data);
-          this.getDepts();
         })
         .catch((e) => {
           console.log(e);
@@ -361,8 +379,6 @@ export default {
     },
     refreshList() {
       this.retrieveAll();
-      this.startUp();
-      this.sectionsJoinAll();
       console.log(this.megaSections);
     },
     //================================================================================================================
@@ -370,6 +386,7 @@ export default {
       this.filtered_courses = this.courses.filter(
         (course) => course.dept == this.filter_dept
       );
+
       for (let i = 0; i < this.sections.length; i++) {
         for (let j = 0; j < this.filtered_courses.length; j++) {
           if (this.sections[i].courseId == this.filtered_courses[j].id) {
@@ -429,13 +446,15 @@ export default {
       this.filtered_sectionTimes = this.sectionTimes;
       this.filtered_sections = this.sections;
     },
+    rnd(a, b) {
+      return Math.floor((b - a + 1) * Math.random()) + a;
+    },
     sectionsJoinAll() {
-      console.log(this.sections);
-      let b = 0;
-      for (let i = 0; i < this.filtered_sections.length; i++) {
+      console.log("hello");
 
+      for (let i = 0; i < this.filtered_sections.length; i++) {
         this.tempSection = this.filtered_sections[i];
-        for (let a = 0; a < this.filtered_courses; a++) {
+        for (let a = 0; a < this.filtered_courses.length; a++) {
           if (this.tempSection.courseId == this.filtered_courses[a].id) {
             this.tempCourse = this.filtered_courses[a];
             break;
@@ -460,7 +479,6 @@ export default {
                       ) {
                         this.tempMegaSec.courseName = this.tempCourse.name;
                         this.tempMegaSec.dept = this.tempCourse.dept;
-                        this.tempMegaSec.name = this.tempCourse.name;
                         this.tempMegaSec.sectionNumber =
                           this.tempSection.number;
                         this.tempMegaSec.startTime =
@@ -472,11 +490,153 @@ export default {
                         this.tempMegaSec.roomName = this.filtered_rooms[k];
                         this.tempMegaSec.FacultyName =
                           this.filtered_faculty[m].name;
-                        b++;
-                        this.megaSections[b] = this.tempMegaSec;
-                        // this.megaSections.push(this.tempMegaSec);
-                        console.log("here");
-                        console.log(this.tempMegaSec);
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("SU", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-06 " + this.tempMegaSec.startTime,
+                            end: "2022-11-06 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("S", 0) &&
+                          !this.tempMegaSec.dayWeek.toString().includes("SU", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-12 " + this.tempMegaSec.startTime,
+                            end: "2022-11-12 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("M", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-07 " + this.tempMegaSec.startTime,
+                            end: "2022-11-07 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("W", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-09 " + this.tempMegaSec.startTime,
+                            end: "2022-11-09 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("F", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-11 " + this.tempMegaSec.startTime,
+                            end: "2022-11-11 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("T", 0) 
+                          // &&
+                          // !this.tempMegaSec.dayWeek.toString().includes("H", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-8 " + this.tempMegaSec.startTime,
+                            end: "2022-11-8 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+                        if (
+                          this.tempMegaSec.dayWeek.toString().includes("TH", 0)
+                        ) {
+                          // console.log("eeeeeeeeeeeeeeeeeeeeee");
+                          this.createEvent = {
+                            name: this.tempCourse.name,
+                            color:
+                              this.colors[this.rnd(0, this.colors.length - 1)],
+                            start: "2022-11-10 " + this.tempMegaSec.startTime,
+                            end: "2022-11-10 " + this.tempMegaSec.endTime,
+                            timed: true,
+                            dept: this.tempMegaSec.dept,
+                            number: this.tempMegaSec.sectionNumber,
+                            room: this.tempMegaSec.roomName.number,
+                            faculty: this.tempMegaSec.FacultyName,
+                            dayWeek: this.tempMegaSec.dayWeek,
+                          };
+
+                          this.events.push(this.createEvent);
+                        }
+
+                        this.megasections.push(this.tempMegaSec); // ==============================================================================================================
+                        this.tempMegaSec = [];
+                        // console.log(this.tempMegaSec);
                       }
                     }
                   }
