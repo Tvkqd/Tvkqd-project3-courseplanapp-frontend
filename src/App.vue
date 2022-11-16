@@ -1,65 +1,24 @@
 <template>
   <v-app>
-    <v-app-bar
-      app
-      color="blue lighten-5"
-      dark
-    >
-      <div class="d-flex align-center">
-        <a href="https://www.oc.edu/">
-          <v-img
-          alt="OC Logo"
-          class="shrink mr-2"
-          contain
-          src="OC-Logo.png"
-          transition="scale-transition"
-          width="130"
-        />
-        </a>
-        <v-toolbar-items>
-          <v-btn to="/" text color="red darken-4">Calendar</v-btn>
-          <v-btn to="/admin" text color="red darken-4">Catalog</v-btn>
-          <v-btn to="/adminSchedule" text color="red darken-4">Schedule</v-btn>
-          <!-- <v-btn to="/office-hours" text color="red darken-4">OfficeHours</v-btn> -->
-          <!-- <v-btn to="/rooms" text color="red darken-4">Rooms</v-btn> -->
-          <v-btn to="/cruds" text color="red darken-4">CRUDs</v-btn>
-          <!-- <v-btn to="/conflicts" text color="red darken-4">Conflicts</v-btn> -->
-          <!--<v-btn to="/" text color="red darken-4">Course</v-btn>-->
-          <!--<v-btn to="/about" text color="red darken-4">About</v-btn>
-          <v-btn to="/hello" text color="red darken-4">Hello</v-btn>-->
-          <!--<v-btn to="/add" text color="red darken-4">Add</v-btn>-->
-          <!--<v-btn to="/delete" text color="red darken-4">Delete</v-btn>
-          <v-btn to="/update" text color="red darken-4">Update</v-btn>-->
-        </v-toolbar-items>
-      </div>
-    </v-app-bar>
-
-    <v-main>
-      <!--Load the views files-->
-      <router-view/>
-    </v-main>
-
-    <v-footer class="pa-3"
-    color="blue lighten-5">
-    <v-spacer></v-spacer>
-    <div style="color:crimson"> Team1&nbsp; &copy; {{ new Date().getFullYear() }}</div>
-    <v-spacer></v-spacer>
-  </v-footer>
-
+    <MenuBar></MenuBar>
+    <v-main >
+        <router-view />
+    </v-main> 
   </v-app>
 </template>
 
 <script>
-
-
-
+import MenuBar from '@/components/MenuBar.vue'
 export default {
   name: 'App',
+  components: {
+    MenuBar
+  },
   data() {
-   
-},
-methods: {
- 
+    return {
+    }
+  },  
+  methods: {
+  },
 }
-};
 </script>

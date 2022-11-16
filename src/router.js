@@ -6,8 +6,16 @@ export default new Router({
   routes: [
     {
       path: "/",
+      redirect: '/login'
+    },
+    {
+    path: '/login',
+    name: 'Login',
+    component: () => import("./views/Login")
+    },
+    {
+      path: "/home",
       name: "calendar-view",
-      //component: () => import("./views/List-View")
       component: () => import("./views/Calendar-View")
     },
     {
