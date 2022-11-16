@@ -1,13 +1,25 @@
 import Vue from "vue";
 import Router from "vue-router";
 Vue.use(Router);
-export default new Router({
-  mode: "history",
-  routes: [
+
+let  baseRoutes = [
     {
       path: "/",
-      name: "calendar-view",
-      //component: () => import("./views/List-View")
+      redirect: '/login'
+    },
+    {
+      path: "/login",
+      name: "Login",
+      component: () => import("./views/Login")
+    },
+    {
+      path: "/signup",
+      name: "SignUp",
+      component: () => import("./views/SignUp")
+    },
+    {
+      path: "/home",
+      name: "Home",
       component: () => import("./views/Calendar-View")
     },
     {
@@ -149,6 +161,25 @@ export default new Router({
       props: true,
       name: "updateSemester",
       component: () => import("./components/UpdateSemester")
-    },
-  ]
-});
+    }
+]
+
+const router = new Router({
+  mode: 'history',
+  linkExactActiveClass: 'active',
+  base: process.env.BASE_URL,
+  routes: baseRoutes
+})
+
+router.beforeEach((to, from, next) => {
+  // redirect to login page if not logged in and trying to access a restricted page
+  const publicPages = ['/login', '/signup']
+  const authRequired = !publicPages.includes(to.path)
+  const loggedIn = localStorage.getItem('user')
+  if (authRequired && !loggedIn) {
+    return next('/login')
+  }
+  next()
+})
+
+export default router
